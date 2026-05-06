@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TITANIA v0.3</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050709;--bg2:#090C0F;--bg3:#0D1114;--bg4:#111619;
+  --b1:rgba(255,255,255,0.05);--b2:rgba(255,255,255,0.09);--b3:rgba(255,255,255,0.14);
+  --txt:#B0BEC8;--txh:#EDF2F6;--txd:#485460;
+  --gold:#C49A38;--gold2:#DDB84E;
+  --grn:#28C87A;--red:#D94848;--amb:#D48828;--blue:#4A9EE0;--pur:#9B7AE8;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:'DM Mono',monospace;background:var(--bg);color:var(--txt);min-height:100vh;overflow-x:hidden}
+
+/* NAV */
+nav{display:flex;align-items:center;gap:10px;padding:18px 18px 14px;border-bottom:1px solid var(--b1);position:sticky;top:0;background:rgba(5,7,9,0.96);backdrop-filter:blur(12px);z-index:200}
+.logo{font-family:'Cormorant',serif;font-size:22px;font-weight:700;color:var(--txh);letter-spacing:.18em}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold);animation:blink 2.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.vtag{margin-left:auto;font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--txd);padding:4px 10px;border:1px solid var(--b1)}
+.mem-badge{font-size:8px;letter-spacing:.3em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(40,200,122,.2);color:var(--grn);cursor:pointer;background:rgba(40,200,122,.04);transition:all .2s}
+.mem-badge:active{background:rgba(40,200,122,.1)}
+.back-btn{display:none;align-items:center;gap:6px;font-size:11px;color:var(--txd);cursor:pointer;padding:4px 2px;border:none;background:transparent;font-family:'DM Mono',monospace;transition:color .2s;-webkit-appearance:none;flex-shrink:0}
+.back-btn:active{color:var(--txh)}
+.back-btn .back-arrow{font-size:16px;line-height:1;color:var(--gold)}
+
+/* SCREENS */
+.scr{display:none}.scr.on{display:block}
+
+/* ── HOME ── */
+#home{padding:32px 18px 60px;max-width:580px;margin:0 auto}
+.ey{font-size:9px;letter-spacing:.5em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.ey::before{content:'';width:18px;height:1px;background:var(--gold)}
+.htitle{font-family:'Cormorant',serif;font-size:clamp(34px,10vw,52px);font-weight:700;color:var(--txh);line-height:1.05;margin-bottom:12px}
+.htitle em{font-style:italic;color:var(--gold)}
+.hsub{font-size:12px;color:var(--txd);line-height:1.8;margin-bottom:32px}
+.fbadge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid rgba(40,200,122,.25);background:rgba(40,200,122,.06);color:var(--grn);font-size:9px;letter-spacing:.35em;text-transform:uppercase;margin-bottom:32px}
+.fcard{background:var(--bg2);border:1px solid var(--b1);padding:22px 18px;margin-bottom:10px}
+.flbl{font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:var(--txd);display:block;margin-bottom:8px}
+.finp{width:100%;background:var(--bg3);border:1px solid var(--b1);color:var(--txh);font-family:'DM Mono',monospace;font-size:13px;padding:12px 14px;outline:none;border-radius:0;-webkit-appearance:none;transition:border-color .2s}
+.finp:focus{border-color:var(--gold)}.finp::placeholder{color:var(--txd)}
+.fhint{font-size:10px;color:var(--txd);margin-top:6px;line-height:1.6}
+.ferr{display:none;padding:12px 14px;background:rgba(217,72,72,.06);border:1px solid rgba(217,72,72,.25);color:var(--red);font-size:11px;line-height:1.6;margin-top:10px}
+.gbtn{width:100%;background:var(--gold);color:var(--bg);font-family:'DM Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.4em;text-transform:uppercase;padding:16px;border:none;cursor:pointer;border-radius:0;margin-top:16px;transition:background .2s;-webkit-appearance:none}
+.gbtn:active{background:var(--gold2)}.gbtn:disabled{opacity:.35}
+.istrip{padding:14px 16px;border:1px solid var(--b1);background:var(--bg2);font-size:11px;color:var(--txd);line-height:1.75}
+.istrip strong{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--grn);display:block;margin-bottom:4px}
+
+/* ── MULTI-REPO SELECTOR ── */
+.count-card{background:var(--bg2);border:1px solid rgba(196,154,56,.2);padding:20px 18px;margin-bottom:10px}
+.count-row{display:flex;align-items:center;gap:0;margin:12px 0 16px}
+.cnt-btn{width:44px;height:44px;background:var(--bg3);border:1px solid var(--b1);color:var(--txh);font-family:'DM Mono',monospace;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;border-radius:0;transition:all .2s;-webkit-appearance:none}
+.cnt-btn:active{background:rgba(196,154,56,.15);border-color:var(--gold)}
+.cnt-display{flex:1;height:44px;background:var(--bg);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-family:'Cormorant',serif;font-size:36px;font-weight:700;color:var(--gold);letter-spacing:-.02em}
+.cnt-presets{display:flex;gap:6px;flex-wrap:wrap}
+.cnt-preset{padding:6px 14px;font-size:9px;letter-spacing:.3em;text-transform:uppercase;background:var(--bg3);border:1px solid var(--b1);color:var(--txd);cursor:pointer;border-radius:0;font-family:'DM Mono',monospace;transition:all .2s;-webkit-appearance:none}
+.cnt-preset:hover,.cnt-preset.active{border-color:var(--gold);color:var(--gold);background:rgba(196,154,56,.07)}
+.cnt-label{font-size:10px;color:var(--txd);margin-bottom:8px}
+
+/* ── REPO INPUT LIST ── */
+.repo-input-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.repo-idx{font-family:'Cormorant',serif;font-size:20px;font-weight:700;color:var(--txd);width:24px;text-align:center;flex-shrink:0}
+.repo-input-row .finp{margin:0}
+.repo-input-row.primary .repo-idx{color:var(--gold)}
+
+/* ── MEMORY PANEL ── */
+#mem-panel{display:none;padding:28px 18px 60px;max-width:640px;margin:0 auto}
+.mp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--b1)}
+.mp-title{font-family:'Cormorant',serif;font-size:28px;font-weight:700;color:var(--txh)}
+.btn-clear{font-size:8px;letter-spacing:.35em;text-transform:uppercase;padding:8px 14px;background:rgba(217,72,72,.08);border:1px solid rgba(217,72,72,.25);color:var(--red);cursor:pointer;font-family:'DM Mono',monospace;border-radius:0}
+.btn-clear:active{background:rgba(217,72,72,.15)}
+.mp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--b1);border:1px solid var(--b1);margin-bottom:20px}
+.mp-stat{background:var(--bg2);padding:18px 14px;text-align:center}
+.mp-sn{font-family:'Cormorant',serif;font-size:32px;font-weight:700;color:var(--gold);display:block;line-height:1}
+.mp-sl{font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--txd);margin-top:4px;display:block}
+.mp-insight{padding:16px 18px;background:var(--bg2);border:1px solid var(--b1);margin-bottom:16px;font-size:12px;color:var(--txt);line-height:1.75}
+.mp-insight-title{font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:block}
+#mem-list{display:flex;flex-direction:column;gap:1px;background:var(--b1)}
+.mem-item{background:var(--bg2);padding:16px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .2s}
+.mem-item:active{background:var(--bg3)}
+.mem-score{font-family:'Cormorant',serif;font-size:28px;font-weight:700;line-height:1;width:40px;text-align:center;flex-shrink:0}
+.mem-info{flex:1;min-width:0}.mem-repo{font-size:12px;color:var(--txh);word-break:break-all;margin-bottom:3px}.mem-date{font-size:9px;color:var(--txd);letter-spacing:.2em}
+.mem-arrow{color:var(--txd);font-size:12px;flex-shrink:0}
+.mp-empty{text-align:center;padding:48px 20px;font-size:12px;color:var(--txd);line-height:1.8}
+
+/* ── LEARNING CHART ── */
+.chart-section{background:var(--bg2);border:1px solid rgba(196,154,56,.18);margin-bottom:16px;overflow:hidden}
+.chart-head{padding:14px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between}
+.chart-lbl{font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:var(--gold)}
+.chart-trend{font-size:10px;padding:3px 10px;border-radius:0}
+.trend-up{color:var(--grn);border:1px solid rgba(40,200,122,.3);background:rgba(40,200,122,.06)}
+.trend-down{color:var(--red);border:1px solid rgba(217,72,72,.3);background:rgba(217,72,72,.06)}
+.trend-flat{color:var(--amb);border:1px solid rgba(212,136,40,.3);background:rgba(212,136,40,.06)}
+.chart-body{padding:14px 16px 10px}
+.chart-sub{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--txd);margin-bottom:4px}
+.lang-chart-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.lang-chart-name{font-size:10px;color:var(--txt);width:80px;flex-shrink:0;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.lang-chart-bg{flex:1;height:4px;background:var(--b2);position:relative}
+.lang-chart-fill{height:4px;background:var(--gold);transition:width .6s ease}
+.lang-chart-pct{font-size:9px;color:var(--txd);width:28px;text-align:right;flex-shrink:0}
+
+/* ── LOADING ── */
+#load{padding:60px 18px 60px;max-width:560px;margin:0 auto}
+.load-header{text-align:center;margin-bottom:32px}
+.ring{width:42px;height:42px;border:1px solid var(--b2);border-top-color:var(--gold);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 24px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.llbl{font-size:9px;letter-spacing:.45em;text-transform:uppercase;color:var(--txd)}
+.lstep{font-size:12px;color:var(--gold);margin-top:10px;min-height:18px;transition:opacity .3s}
+
+/* Multi-repo loading grid */
+.multi-load-title{font-size:9px;letter-spacing:.45em;text-transform:uppercase;color:var(--txd);text-align:center;margin-bottom:20px}
+.multi-progress-bar{height:2px;background:var(--b2);margin-bottom:24px;position:relative;overflow:hidden}
+.multi-progress-fill{height:2px;background:var(--gold);transition:width .4s ease;position:absolute;left:0;top:0}
+.msr-grid{display:flex;flex-direction:column;gap:2px}
+.msr-card{background:var(--bg2);border:1px solid var(--b1);padding:14px 16px;display:flex;align-items:center;gap:14px;transition:border-color .4s}
+.msr-card.done{border-color:rgba(40,200,122,.2)}
+.msr-card.error{border-color:rgba(217,72,72,.2)}
+.msr-idx{font-family:'Cormorant',serif;font-size:22px;font-weight:700;color:var(--txd);width:28px;text-align:center;flex-shrink:0}
+.msr-info{flex:1;min-width:0}
+.msr-name{font-size:12px;color:var(--txh);word-break:break-all;margin-bottom:4px}
+.msr-status{font-size:9px;letter-spacing:.3em;text-transform:uppercase}
+.msr-status.analyzing{color:var(--amb);animation:pulse .8s ease-in-out infinite alternate}
+.msr-status.done{color:var(--grn)}
+.msr-status.error{color:var(--red)}
+.msr-status.queued{color:var(--txd)}
+@keyframes pulse{from{opacity:.5}to{opacity:1}}
+.msr-score{font-family:'Cormorant',serif;font-size:28px;font-weight:700;width:42px;text-align:center;flex-shrink:0;line-height:1}
+
+/* Live learning display */
+.live-learn{background:rgba(155,122,232,.05);border:1px solid rgba(155,122,232,.18);padding:16px 18px;margin-top:20px}
+.live-learn-title{font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:var(--pur);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ll-dot{width:5px;height:5px;border-radius:50%;background:var(--pur);animation:blink 1s ease-in-out infinite}
+.ll-items{display:flex;flex-direction:column;gap:6px}
+.ll-item{display:flex;align-items:flex-start;gap:10px;font-size:11px;opacity:0;transform:translateY(6px);animation:llIn .35s ease forwards}
+@keyframes llIn{to{opacity:1;transform:translateY(0)}}
+.ll-key{color:var(--txd);font-size:9px;letter-spacing:.2em;text-transform:uppercase;width:100px;flex-shrink:0;padding-top:1px}
+.ll-val{color:var(--txh)}
+
+/* ── RESULTS ── */
+#res{padding:24px 18px 60px;max-width:640px;margin:0 auto}
+.rh{margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--b1)}
+.rname{font-family:'Cormorant',serif;font-size:28px;font-weight:700;color:var(--txh);line-height:1.1;margin-bottom:8px;word-break:break-all}
+.rmeta{display:flex;flex-wrap:wrap;gap:12px;font-size:10px;color:var(--txd)}
+.rmeta span{display:flex;align-items:center;gap:4px}
+.md{width:3px;height:3px;border-radius:50%;background:var(--gold)}
+
+/* Learning banner */
+.learn-banner{padding:12px 16px;background:rgba(40,200,122,.05);border:1px solid rgba(40,200,122,.15);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.learn-banner-txt{font-size:11px;color:var(--grn);line-height:1.6;flex:1}
+.learn-dot{width:6px;height:6px;border-radius:50%;background:var(--grn);flex-shrink:0;animation:blink 1.5s ease-in-out infinite}
+
+/* Aprendizaje activo section */
+.active-learn{background:rgba(155,122,232,.05);border:1px solid rgba(155,122,232,.18);margin-bottom:10px;overflow:hidden}
+.al-head{padding:13px 16px;border-bottom:1px solid rgba(155,122,232,.1);display:flex;align-items:center;gap:8px}
+.al-lbl{font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:var(--pur);flex:1}
+.al-icon{font-size:14px}
+.al-body{padding:16px}
+.al-insight{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--b1);font-size:12px}
+.al-insight:last-child{border:none}
+.al-bullet{color:var(--pur);font-size:10px;padding-top:2px;flex-shrink:0}
+.al-text{color:var(--txt);line-height:1.65}
+.al-text b{color:var(--txh)}
+
+/* Comparison card */
+.cmp-card{background:var(--bg2);border:1px solid rgba(74,158,224,.2);margin-bottom:10px;overflow:hidden}
+.cmp-ch{padding:13px 16px;border-bottom:1px solid var(--b1);background:rgba(74,158,224,.04)}
+.cmp-lbl{font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:var(--blue)}
+.cmp-row{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--b1);font-size:12px}
+.cmp-row:last-child{border:none}.cmp-key{color:var(--txd);font-size:10px;letter-spacing:.1em}.cmp-val{color:var(--txh)}
+.cmp-val.better{color:var(--grn)}.cmp-val.worse{color:var(--red)}.cmp-val.same{color:var(--amb)}
+
+/* Multi-repo results */
+#multi-res{padding:24px 18px 60px;max-width:640px;margin:0 auto}
+.multi-rh{margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--b1)}
+.multi-rname{font-family:'Cormorant',serif;font-size:26px;font-weight:700;color:var(--txh);line-height:1.1;margin-bottom:6px}
+.multi-rmeta{font-size:10px;color:var(--txd)}
+.rank-grid{display:flex;flex-direction:column;gap:2px;margin-bottom:16px}
+.rank-item{background:var(--bg2);border:1px solid var(--b1);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .2s}
+.rank-item:active{background:var(--bg3)}
+.rank-item.error{opacity:.5}
+.rank-pos{font-family:'Cormorant',serif;font-size:26px;font-weight:700;color:var(--txd);width:30px;text-align:center;flex-shrink:0}
+.rank-pos.gold{color:var(--gold)}.rank-pos.silver{color:#8899AA}.rank-pos.bronze{color:#9B7050}
+.rank-info{flex:1;min-width:0}
+.rank-repo{font-size:12px;color:var(--txh);word-break:break-all;margin-bottom:3px}
+.rank-detail{font-size:9px;color:var(--txd);letter-spacing:.15em}
+.rank-score{font-family:'Cormorant',serif;font-size:30px;font-weight:700;flex-shrink:0}
+.rank-arrow{color:var(--txd);flex-shrink:0}
+.detail-panel{display:none;border-top:1px solid var(--b1);background:var(--bg3);padding:0}
+.detail-panel.open{display:block}
+.detail-inner{padding:16px}
+
+/* stat grid */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--b1);margin-bottom:10px}
+.si{background:var(--bg2);padding:18px 14px;text-align:center}
+.sn{font-family:'Cormorant',serif;font-size:36px;font-weight:700;color:var(--txh);line-height:1;display:block}
+.sn.g{color:var(--grn)}.sn.w{color:var(--amb)}.sn.r{color:var(--red)}
+.sl{font-size:8px;letter-spacing:.3em;text-transform:uppercase;color:var(--txd);margin-top:4px;display:block}
+
+/* health bar */
+.hbw{margin:12px 0 6px}.hbb{height:2px;background:var(--b2);position:relative}.hbf{height:2px}
+.hlb{display:flex;justify-content:space-between;font-size:8px;color:var(--txd);letter-spacing:.2em;text-transform:uppercase;margin-top:8px}
+
+/* card */
+.card{background:var(--bg2);border:1px solid var(--b1);margin-bottom:10px;overflow:hidden}
+.ch{padding:13px 16px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:8px}
+.chlbl{font-size:8px;letter-spacing:.45em;text-transform:uppercase;color:var(--txd);flex:1}.chnum{font-family:'Cormorant',serif;font-size:20px;font-weight:700;color:var(--gold)}
+.cb{padding:16px}
+
+/* lang bars */
+.li{margin-bottom:12px}.lr{display:flex;justify-content:space-between;margin-bottom:5px}
+.ln{font-size:10px;color:var(--txt);text-transform:uppercase;letter-spacing:.15em}.lp{font-size:10px;color:var(--gold)}
+.lbg{height:1px;background:var(--b2)}.lbf{height:1px;background:var(--gold)}
+
+/* checks */
+.ck{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--b1);font-size:12px}
+.ck:last-child{border:none}.ckok{color:var(--grn);font-size:10px;letter-spacing:.15em}.ckno{color:var(--red);font-size:10px;letter-spacing:.15em}
+
+/* summary */
+.sr{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--b1);font-size:12px}
+.sr:last-child{border:none}.sk{font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--txd);padding-top:1px}.sv{color:var(--txt);line-height:1.6}
+
+/* files / dirs */
+.fi{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--b1);font-size:11px}
+.fi:last-child{border:none}.fn{color:var(--txt);flex:1;margin-right:8px;word-break:break-all}.fs{color:var(--txd);flex-shrink:0}
+.di{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--b1);font-size:11px}
+.di:last-child{border:none}.diic{color:var(--gold)}.din{color:var(--txt);flex:1}.dic{color:var(--txd)}
+
+/* debt */
+.db{padding:12px 14px;border-left:2px solid var(--b2);margin-bottom:8px;background:var(--bg3)}
+.db.high{border-color:var(--red)}.db.med{border-color:var(--amb)}.db.low{border-color:var(--grn)}
+.ds{font-size:7px;letter-spacing:.4em;text-transform:uppercase;margin-bottom:4px;display:block}
+.db.high .ds{color:var(--red)}.db.med .ds{color:var(--amb)}.db.low .ds{color:var(--grn)}
+.dt{font-size:12px;color:var(--txt);line-height:1.65}
+
+/* recs */
+.ri{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--b1);align-items:flex-start}
+.ri:last-child{border:none}.rn{font-family:'Cormorant',serif;font-size:24px;font-weight:700;color:var(--b2);line-height:1;flex-shrink:0;width:24px}
+.rt{font-size:12px;color:var(--txt);line-height:1.7;padding-top:2px}
+
+/* download */
+.dl-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.dbtn{background:var(--bg2);color:var(--gold);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.3em;text-transform:uppercase;padding:14px;border:1px solid rgba(196,154,56,.3);cursor:pointer;border-radius:0;transition:all .2s;-webkit-appearance:none}
+.dbtn:active{background:rgba(196,154,56,.1)}
+.btn-new{width:100%;background:transparent;color:var(--txd);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.35em;text-transform:uppercase;padding:14px;border:1px solid var(--b1);cursor:pointer;margin-top:8px;border-radius:0;-webkit-appearance:none;transition:all .2s}
+.btn-new:active{border-color:var(--b3);color:var(--txt)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .4s ease both}
+
+footer{text-align:center;padding:24px 18px;border-top:1px solid var(--b1);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--txd)}
+</style>
+</head>
+<body>
+
+<nav>
+  <button class="back-btn" id="back-btn" onclick="goHome()">
+    <span class="back-arrow">←</span>Inicio
+  </button>
+  <div class="logo">TITANIA</div>
+  <div class="dot"></div>
+  <span class="vtag">v0.3 · Multi-Repo</span>
+  <span class="mem-badge" id="mem-btn" onclick="toggleMem()">0 análisis</span>
+</nav>
+
+<!-- HOME -->
+<div id="home" class="scr on">
+  <div style="padding:32px 18px 60px;max-width:580px;margin:0 auto">
+    <div class="ey">Co-Arquitecto de IA · Multi-Repo · Con Memoria</div>
+    <h1 class="htitle">Analiza hasta<br><em>15 repos a la vez.</em></h1>
+    <div class="fbadge"><span style="color:var(--grn)">●</span> Sin API Key · Simultáneo · Aprende con cada análisis</div>
+    <p class="hsub">Introduce de 1 a 15 repositorios públicos de GitHub para analizarlos en paralelo. Titania detecta deuda técnica, compara proyectos y aprende con cada análisis.</p>
+
+    <!-- CANTIDAD DE REPOS -->
+    <div class="count-card">
+      <span class="flbl">¿Cuántos repositorios analizar simultáneamente?</span>
+      <div class="count-row">
+        <button class="cnt-btn" onclick="setCount(-1)">−</button>
+        <div class="cnt-display" id="cnt-display">1</div>
+        <button class="cnt-btn" onclick="setCount(1)">+</button>
+      </div>
+      <div class="cnt-label">Acceso rápido:</div>
+      <div class="cnt-presets">
+        <button class="cnt-preset active" onclick="setCountTo(1)">1</button>
+        <button class="cnt-preset" onclick="setCountTo(3)">3</button>
+        <button class="cnt-preset" onclick="setCountTo(5)">5</button>
+        <button class="cnt-preset" onclick="setCountTo(10)">10</button>
+        <button class="cnt-preset" onclick="setCountTo(15)">15 máx</button>
+      </div>
+    </div>
+
+    <!-- INPUTS DINÁMICOS -->
+    <div class="fcard" id="repo-inputs-card">
+      <span class="flbl" id="repos-label">Repositorio GitHub</span>
+      <div id="repo-inputs"></div>
+      <div class="fhint">Solo repositorios públicos · Ej: https://github.com/pallets/flask</div>
+      <div class="ferr" id="ferr"></div>
+      <button class="gbtn" id="gbtn" onclick="start()">Analizar 1 Repositorio →</button>
+    </div>
+
+    <div class="istrip">
+      <strong>Análisis Simultáneo · Sin API · Aprende localmente</strong>
+      Titania analiza múltiples repos en paralelo, guarda cada resultado y aprende patrones con el tiempo. Todo en tu dispositivo, sin enviar datos a ningún servidor.
+    </div>
+  </div>
+</div>
+
+<!-- MEMORY PANEL -->
+<div id="mem-panel" class="scr">
+  <div style="padding:28px 18px 60px;max-width:640px;margin:0 auto">
+    <div class="mp-head">
+      <div class="mp-title">Memoria</div>
+      <button class="btn-clear" onclick="clearMemory()">Borrar todo</button>
+    </div>
+    <div class="mp-stats" id="mp-stats"></div>
+
+    <!-- LEARNING CHART -->
+    <div class="chart-section" id="score-chart-section" style="display:none">
+      <div class="chart-head">
+        <span class="chart-lbl">Evolución del Score de Salud</span>
+        <span class="chart-trend" id="trend-badge"></span>
+      </div>
+      <div class="chart-body">
+        <div id="score-chart-svg"></div>
+      </div>
+    </div>
+
+    <!-- LANGUAGE FREQUENCY CHART -->
+    <div class="chart-section" id="lang-chart-section" style="display:none">
+      <div class="chart-head">
+        <span class="chart-lbl">Lenguajes Más Frecuentes</span>
+      </div>
+      <div class="chart-body" id="lang-chart-body"></div>
+    </div>
+
+    <div class="mp-insight" id="mp-insight" style="display:none"></div>
+    <div id="mem-list"></div>
+    <button class="btn-new" style="margin-top:16px" onclick="toggleMem()">← Volver</button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="load" class="scr">
+  <div style="padding:60px 18px 60px;max-width:560px;margin:0 auto">
+    <div class="load-header">
+      <div class="ring"></div>
+      <div class="llbl" id="load-title">Analizando</div>
+      <div class="lstep" id="lstep">Conectando con GitHub...</div>
+    </div>
+
+    <!-- Single repo steps (hidden in multi mode) -->
+    <div id="single-steps"></div>
+
+    <!-- Multi-repo grid -->
+    <div id="multi-load-area" style="display:none">
+      <div class="multi-progress-bar">
+        <div class="multi-progress-fill" id="multi-prog-fill" style="width:0%"></div>
+      </div>
+      <div class="msr-grid" id="msr-grid"></div>
+    </div>
+
+    <!-- Live Learning Display -->
+    <div class="live-learn" id="live-learn" style="display:none">
+      <div class="live-learn-title">
+        <div class="ll-dot"></div>
+        Titania está aprendiendo...
+      </div>
+      <div class="ll-items" id="ll-items"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SINGLE RESULTS -->
+<div id="res" class="scr"></div>
+
+<!-- MULTI RESULTS -->
+<div id="multi-res" class="scr">
+  <div style="padding:24px 18px 60px;max-width:640px;margin:0 auto">
+    <div class="multi-rh fu">
+      <div class="multi-rname" id="multi-rname">Resultados del Análisis</div>
+      <div class="multi-rmeta" id="multi-rmeta"></div>
+    </div>
+    <div class="rank-grid" id="rank-grid"></div>
+    <div class="dl-row">
+      <button class="dbtn" onclick="downloadMultiTXT()">↓ Exportar Comparativa</button>
+      <button class="dbtn" onclick="newAnalysis()">← Nuevo Análisis</button>
+    </div>
+  </div>
+</div>
+
+<footer>TITANIA · Multi-Repo · Memoria Local · Proto v0.3</footer>
+
+<script>
+// ══════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════
+const STORAGE_KEY = 'titania_memory_v2';
+const MAX_REPOS   = 15;
+
+const STEPS = [
+  'Conectando con GitHub...','Leyendo árbol de archivos...',
+  'Mapeando dependencias...','Calculando estadísticas...',
+  'Detectando deuda técnica...','Comparando con memoria...','Generando reporte...',
+];
+
+const LANG_MAP = {
+  py:'Python',js:'JavaScript',ts:'TypeScript',jsx:'React/JSX',tsx:'React/TSX',
+  java:'Java',kt:'Kotlin',swift:'Swift',go:'Go',rs:'Rust',
+  cpp:'C++',c:'C',cs:'C#',php:'PHP',rb:'Ruby',
+  html:'HTML',css:'CSS',scss:'SCSS',less:'LESS',sql:'SQL',
+  sh:'Shell',bash:'Shell',dart:'Dart',vue:'Vue',svelte:'Svelte',
+  cbl:'COBOL',cob:'COBOL',pl:'Perl',r:'R',scala:'Scala',
+  ex:'Elixir',exs:'Elixir',erl:'Erlang',hs:'Haskell',
+  lua:'Lua',tf:'Terraform',yml:'YAML',yaml:'YAML',
+  json:'JSON',xml:'XML',md:'Markdown',
+};
+const CODE_EXT  = new Set(['py','js','ts','jsx','tsx','java','kt','swift','go','rs','cpp','c','cs','php','rb','scss','less','sql','sh','bash','dart','vue','svelte','cbl','cob','pl','r','scala','ex','exs','erl','hs','lua','tf']);
+const TEST_PAT  = ['/test','/tests','/spec','/specs','/__tests__','_test.','_spec.','.test.','.spec.'];
+const CI_PAT    = ['.github/workflows','.travis.yml','circle.yml','.circleci','jenkinsfile','gitlab-ci','.drone.yml'];
+const DEBT_PAT  = ['todo','fixme','hack','workaround','legacy','deprecated','old_','backup_','temp_','tmp_'];
+const CFG_FILES = ['package.json','requirements.txt','go.mod','cargo.toml','pom.xml','build.gradle','gemfile','composer.json','pyproject.toml'];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let repoCount = 1;
+let _si = 0, _stmr = null;
+let _multiResults = [];
+
+// ══════════════════════════════════════════
+// REPO COUNT UI
+// ══════════════════════════════════════════
+function setCount(delta) {
+  repoCount = Math.max(1, Math.min(MAX_REPOS, repoCount + delta));
+  applyCount();
+}
+function setCountTo(n) {
+  repoCount = Math.max(1, Math.min(MAX_REPOS, n));
+  applyCount();
+}
+function applyCount() {
+  document.getElementById('cnt-display').textContent = repoCount;
+  document.querySelectorAll('.cnt-preset').forEach(btn => {
+    btn.classList.remove('active');
+    if (parseInt(btn.textContent) === repoCount) btn.classList.add('active');
+  });
+  renderRepoInputs();
+  const lbl = repoCount === 1 ? '1 Repositorio' : `${repoCount} Repositorios Simultáneamente`;
+  document.getElementById('gbtn').textContent = `Analizar ${lbl} →`;
+  document.getElementById('repos-label').textContent =
+    repoCount === 1 ? 'Repositorio GitHub' : `${repoCount} Repositorios GitHub`;
+}
+
+function renderRepoInputs() {
+  const c = document.getElementById('repo-inputs');
+  c.innerHTML = '';
+  for (let i = 0; i < repoCount; i++) {
+    const row = document.createElement('div');
+    row.className = 'repo-input-row' + (i === 0 ? ' primary' : '');
+    row.innerHTML = `
+      <div class="repo-idx">${i + 1}</div>
+      <input class="finp" type="url" id="repo-url-${i}"
+        placeholder="https://github.com/usuario/repo"
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        style="margin-bottom:0"/>`;
+    if (i > 0) row.style.marginTop = '8px';
+    c.appendChild(row);
+    const inp = row.querySelector('input');
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') start(); });
+  }
+}
+
+// ══════════════════════════════════════════
+// MEMORY
+// ══════════════════════════════════════════
+function loadMemory() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+  catch(_) { return []; }
+}
+function saveToMemory(data) {
+  const mem = loadMemory();
+  const idx = mem.findIndex(m => m.repoName === data.repoName);
+  if (idx !== -1) mem.splice(idx, 1);
+  mem.unshift({ ...data, date: new Date().toISOString() });
+  if (mem.length > 500) mem.pop();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(mem));
+  updateMemBadge();
+}
+function updateMemBadge() {
+  const n = loadMemory().length;
+  document.getElementById('mem-btn').textContent = n + ' análisis';
+}
+function clearMemory() {
+  if (!confirm('¿Borrar toda la memoria de Titania? Esta acción no se puede deshacer.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  updateMemBadge();
+  renderMemPanel();
+}
+function getMemoryInsights(mem) {
+  if (mem.length < 2) return null;
+  const scores   = mem.map(m => m.score);
+  const avgScore = Math.round(scores.reduce((a,b) => a+b, 0) / scores.length);
+  const noTests  = mem.filter(m => !m.hasTests).length;
+  const noCI     = mem.filter(m => !m.hasCI).length;
+  const langs = {};
+  mem.forEach(m => Object.keys(m.languages || {}).forEach(l => { langs[l] = (langs[l]||0)+1; }));
+  const topLang = Object.entries(langs).sort((a,b) => b[1]-a[1])[0];
+  const trend = scores.length >= 3
+    ? (scores[0] > scores[2] ? 'up' : scores[0] < scores[2] ? 'down' : 'flat')
+    : 'flat';
+  return { avgScore, noTests, noCI, topLang, total: mem.length, langs, trend };
+}
+
+// ══════════════════════════════════════════
+// LEARNING CHART (SVG)
+// ══════════════════════════════════════════
+function renderScoreChart(mem) {
+  if (mem.length < 2) return '';
+  const data   = mem.slice(0, 20).reverse();
+  const scores = data.map(m => m.score);
+  const W = 300, H = 110, PX = 28, PY = 16;
+  const xStep  = (W - PX * 2) / Math.max(scores.length - 1, 1);
+  const yScale = (H - PY * 2) / 100;
+  const pts    = scores.map((s, i) => ({ x: PX + i * xStep, y: H - PY - s * yScale }));
+
+  // Smooth bezier path
+  let sp = `M ${pts[0].x} ${pts[0].y}`;
+  for (let i = 1; i < pts.length; i++) {
+    const p = pts[i-1], c = pts[i];
+    const cpx = (p.x + c.x) / 2;
+    sp += ` C ${cpx} ${p.y}, ${cpx} ${c.y}, ${c.x} ${c.y}`;
+  }
+  const lastPt  = pts[pts.length - 1], firstPt = pts[0];
+  const fillPath = sp + ` L ${lastPt.x} ${H - PY} L ${firstPt.x} ${H - PY} Z`;
+
+  const gridLines = [0, 25, 50, 75, 100].map(v => {
+    const y = H - PY - v * yScale;
+    return `<line x1="${PX}" y1="${y}" x2="${W-PX}" y2="${y}" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+            <text x="${PX-4}" y="${y+3}" text-anchor="end" fill="#485460" font-size="7" font-family="DM Mono,monospace">${v}</text>`;
+  }).join('');
+
+  const dots = pts.map((p, i) => {
+    const s = scores[i];
+    const col = s >= 65 ? '#28C87A' : s >= 45 ? '#D48828' : '#D94848';
+    const label = i === pts.length - 1 ? `<text x="${p.x}" y="${p.y - 8}" text-anchor="middle" fill="${col}" font-size="8" font-family="DM Mono,monospace">${s}</text>` : '';
+    return `<circle cx="${p.x}" cy="${p.y}" r="3" fill="${col}" stroke="#050709" stroke-width="1.5"/>${label}`;
+  }).join('');
+
+  // X axis: show first and last dates
+  const firstDate = new Date(data[0].date).toLocaleDateString('es-MX',{day:'2-digit',month:'short'});
+  const lastDate  = new Date(data[data.length-1].date).toLocaleDateString('es-MX',{day:'2-digit',month:'short'});
+  const xLabels = pts.length > 1
+    ? `<text x="${pts[0].x}" y="${H-1}" text-anchor="middle" fill="#485460" font-size="7" font-family="DM Mono,monospace">${firstDate}</text>
+       <text x="${pts[pts.length-1].x}" y="${H-1}" text-anchor="middle" fill="#485460" font-size="7" font-family="DM Mono,monospace">${lastDate}</text>`
+    : '';
+
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">
+    <defs>
+      <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#C49A38" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#C49A38" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    ${gridLines}
+    <path d="${fillPath}" fill="url(#cg)"/>
+    <path d="${sp}" fill="none" stroke="#C49A38" stroke-width="1.5" stroke-linecap="round"/>
+    ${dots}
+    ${xLabels}
+  </svg>`;
+}
+
+function renderLangChart(ins) {
+  if (!ins || !ins.langs) return '';
+  const sorted = Object.entries(ins.langs).sort((a,b) => b[1]-a[1]).slice(0, 6);
+  const max = sorted[0]?.[1] || 1;
+  return sorted.map(([lang, count]) => {
+    const pct = Math.round(count / ins.total * 100);
+    const w   = Math.round(count / max * 100);
+    return `<div class="lang-chart-row">
+      <div class="lang-chart-name">${lang}</div>
+      <div class="lang-chart-bg"><div class="lang-chart-fill" style="width:${w}%"></div></div>
+      <div class="lang-chart-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// SCREENS
+// ══════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.scr').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const backBtn = document.getElementById('back-btn');
+  if (backBtn) backBtn.style.display = id === 'home' ? 'none' : 'flex';
+}
+function goHome() {
+  document.getElementById('res').innerHTML = '';
+  document.getElementById('gbtn').disabled = false;
+  document.getElementById('ferr').style.display = 'none';
+  stopSteps();
+  hideLiveLearning();
+  show('home');
+}
+function toggleMem() {
+  if (document.getElementById('mem-panel').classList.contains('on')) {
+    show('home');
+  } else {
+    renderMemPanel();
+    show('mem-panel');
+  }
+}
+
+function renderMemPanel() {
+  const mem = loadMemory();
+  const ins = getMemoryInsights(mem);
+  const avgScore = ins ? ins.avgScore : 0;
+
+  document.getElementById('mp-stats').innerHTML = `
+    <div class="mp-stat"><span class="mp-sn">${mem.length}</span><span class="mp-sl">Analizados</span></div>
+    <div class="mp-stat"><span class="mp-sn" style="color:${avgScore>=65?'var(--grn)':avgScore>=45?'var(--amb)':'var(--red)'}">${avgScore||'—'}</span><span class="mp-sl">Score Promedio</span></div>
+    <div class="mp-stat"><span class="mp-sn">${ins?ins.noCI:0}</span><span class="mp-sl">Sin CI/CD</span></div>`;
+
+  // Score chart
+  const chartSection = document.getElementById('score-chart-section');
+  if (mem.length >= 2) {
+    chartSection.style.display = 'block';
+    document.getElementById('score-chart-svg').innerHTML = renderScoreChart(mem);
+    const trendBadge = document.getElementById('trend-badge');
+    const trend = ins?.trend || 'flat';
+    trendBadge.className = 'chart-trend ' + (trend === 'up' ? 'trend-up' : trend === 'down' ? 'trend-down' : 'trend-flat');
+    trendBadge.textContent = trend === 'up' ? '↑ Mejorando' : trend === 'down' ? '↓ Declinando' : '→ Estable';
+  } else {
+    chartSection.style.display = 'none';
+  }
+
+  // Lang chart
+  const langSection = document.getElementById('lang-chart-section');
+  if (ins && ins.langs && Object.keys(ins.langs).length > 0) {
+    langSection.style.display = 'block';
+    document.getElementById('lang-chart-body').innerHTML = renderLangChart(ins);
+  } else {
+    langSection.style.display = 'none';
+  }
+
+  // Insights
+  const insEl = document.getElementById('mp-insight');
+  if (ins && mem.length >= 2) {
+    insEl.style.display = 'block';
+    insEl.innerHTML = `
+      <span class="mp-insight-title">Lo que Titania ha aprendido</span>
+      ${ins.noTests > 0 ? `<b style="color:var(--txh)">${ins.noTests} de ${ins.total}</b> proyectos no tienen tests automatizados.<br>` : ''}
+      ${ins.noCI > 0 ? `<b style="color:var(--txh)">${ins.noCI} de ${ins.total}</b> proyectos carecen de pipeline CI/CD.<br>` : ''}
+      ${ins.topLang ? `Lenguaje más común en tu historial: <b style="color:var(--gold)">${ins.topLang[0]}</b> (${ins.topLang[1]} proyectos).<br>` : ''}
+      Score promedio de salud: <b style="color:var(--txh)">${ins.avgScore}/100</b>.`;
+  } else {
+    insEl.style.display = 'none';
+  }
+
+  // List
+  const listEl = document.getElementById('mem-list');
+  if (mem.length === 0) {
+    listEl.innerHTML = '<div class="mp-empty">Aún no hay análisis guardados.<br>Analiza un repositorio para empezar a construir la memoria de Titania.</div>';
+    return;
+  }
+  listEl.innerHTML = mem.map((m, i) => {
+    const sc  = m.score || 0;
+    const col = sc >= 65 ? 'var(--grn)' : sc >= 45 ? 'var(--amb)' : 'var(--red)';
+    const date = new Date(m.date).toLocaleDateString('es-MX',{day:'2-digit',month:'short',year:'numeric'});
+    return `<div class="mem-item" onclick="replayResult(${i})">
+      <div class="mem-score" style="color:${col}">${sc}</div>
+      <div class="mem-info">
+        <div class="mem-repo">${m.repoName}</div>
+        <div class="mem-date">${date} · ${m.totalFiles} archivos · ${m.languagesCount} lenguajes</div>
+      </div>
+      <div class="mem-arrow">›</div>
+    </div>`;
+  }).join('');
+}
+
+function replayResult(idx) {
+  const mem = loadMemory();
+  if (!mem[idx]) return;
+  show('res');
+  renderResults(mem[idx], mem[idx].repoName, true);
+}
+
+// ══════════════════════════════════════════
+// LIVE LEARNING DISPLAY
+// ══════════════════════════════════════════
+let _llTimer = null;
+function showLiveLearning(repoName) {
+  const ll = document.getElementById('live-learn');
+  const llItems = document.getElementById('ll-items');
+  ll.style.display = 'block';
+  llItems.innerHTML = '';
+  const msgs = [
+    ['Repositorio', repoName],
+    ['Estado', 'Accediendo al árbol de archivos...'],
+    ['Progreso', 'Mapeando estructura del proyecto...'],
+  ];
+  msgs.forEach((m, i) => {
+    setTimeout(() => addLLItem(m[0], m[1]), i * 600);
+  });
+}
+function updateLiveLearning(key, val) {
+  const llItems = document.getElementById('ll-items');
+  const existing = [...llItems.querySelectorAll('.ll-item')].find(
+    el => el.querySelector('.ll-key')?.textContent === key
+  );
+  if (existing) {
+    existing.querySelector('.ll-val').textContent = val;
+  } else {
+    addLLItem(key, val);
+  }
+}
+function addLLItem(key, val) {
+  const llItems = document.getElementById('ll-items');
+  const div = document.createElement('div');
+  div.className = 'll-item';
+  div.innerHTML = `<span class="ll-key">${key}</span><span class="ll-val">${val}</span>`;
+  llItems.appendChild(div);
+}
+function hideLiveLearning() {
+  document.getElementById('live-learn').style.display = 'none';
+}
+
+// ══════════════════════════════════════════
+// LOADING STEPS
+// ══════════════════════════════════════════
+function startSteps() {
+  _si = 0;
+  const el = document.getElementById('lstep');
+  if (el) el.textContent = STEPS[0];
+  _stmr = setInterval(() => {
+    _si = (_si + 1) % STEPS.length;
+    const el = document.getElementById('lstep');
+    if (!el) return;
+    el.style.opacity = '0';
+    setTimeout(() => { el.textContent = STEPS[_si]; el.style.opacity = '1'; }, 280);
+  }, 2200);
+}
+function stopSteps() { clearInterval(_stmr); }
+
+// ══════════════════════════════════════════
+// GITHUB API
+// ══════════════════════════════════════════
+function parseGH(url) {
+  const m = url.match(/github\.com\/([^\/]+)\/([^\/\s?#]+)/);
+  return m ? { owner: m[1], repo: m[2].replace(/\.git$/, '') } : null;
+}
+async function ghFetch(url) {
+  const headers = { 'Accept': 'application/vnd.github.v3+json' };
+  const check = async r => {
+    if (r.status === 404) throw new Error('Repositorio no encontrado o es privado.');
+    if (r.status === 403) throw new Error('Límite de GitHub alcanzado. Espera unos minutos.');
+    if (!r.ok) throw new Error('Error de GitHub: ' + r.status);
+    return r.json();
+  };
+  try { return await check(await fetch(url, { headers })); }
+  catch(e) {
+    try {
+      return await check(await fetch('https://corsproxy.io/?' + encodeURIComponent(url), { headers }));
+    } catch(e2) { throw new Error('No se pudo conectar con GitHub.'); }
+  }
+}
+async function getTree(owner, repo) {
+  const d = await ghFetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/HEAD?recursive=1`);
+  if (d.truncated) {
+    try {
+      const d2 = await ghFetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/main?recursive=1`);
+      return d2.tree || d.tree || [];
+    } catch(_) { return d.tree || []; }
+  }
+  return d.tree || [];
+}
+async function getRepoMeta(owner, repo) {
+  try {
+    const d = await ghFetch(`https://api.github.com/repos/${owner}/${repo}`);
+    return { description: d.description||'', stars: d.stargazers_count||0, forks: d.forks_count||0, created: d.created_at?d.created_at.split('T')[0]:'', updated: d.updated_at?d.updated_at.split('T')[0]:'' };
+  } catch(_) { return {}; }
+}
+
+// ══════════════════════════════════════════
+// ANALYSIS ENGINE
+// ══════════════════════════════════════════
+function analyzeTree(items, meta) {
+  const files = items.filter(i => i.type === 'blob');
+  const dirs  = items.filter(i => i.type === 'tree');
+  const paths = items.map(i => i.path.toLowerCase());
+
+  const extCount = {};
+  for (const f of files) {
+    const ext  = (f.path.split('.').pop()||'').toLowerCase();
+    const lang = LANG_MAP[ext];
+    if (lang) extCount[lang] = (extCount[lang]||0)+1;
+  }
+  const totalLang = Object.values(extCount).reduce((a,b) => a+b, 0)||1;
+  const languages = Object.fromEntries(
+    Object.entries(extCount).sort((a,b)=>b[1]-a[1]).slice(0,7)
+      .map(([l,c]) => [l, Math.round(c*100/totalLang)])
+  );
+
+  const codeFiles  = files.filter(f => CODE_EXT.has((f.path.split('.').pop()||'').toLowerCase()));
+  const testFiles  = files.filter(f => TEST_PAT.some(p => f.path.toLowerCase().includes(p)));
+  const testRatio  = codeFiles.length > 0 ? Math.round(testFiles.length*100/codeFiles.length) : 0;
+  const hasTests   = paths.some(p => TEST_PAT.some(t => p.includes(t)));
+  const hasReadme  = paths.some(p => p==='readme'||p==='readme.md'||p==='readme.txt');
+  const hasCI      = paths.some(p => CI_PAT.some(c => p.includes(c)));
+  const hasConfig  = paths.some(p => CFG_FILES.some(c => p===c||p.endsWith('/'+c)));
+  const hasDocFolder = paths.some(p => p.startsWith('docs/')||p==='docs');
+  const hasDocker  = paths.some(p => p.includes('dockerfile')||p.includes('docker-compose'));
+  const hasLicense = paths.some(p => p.includes('license'));
+  const debtFiles  = files.filter(f => DEBT_PAT.some(p => f.path.toLowerCase().includes(p)));
+  const topFiles   = files.filter(f=>(f.size||0)>0).sort((a,b)=>(b.size||0)-(a.size||0)).slice(0,8)
+    .map(f => ({ name: f.path.includes('/')?f.path.split('/').pop()+' · /'+f.path.split('/').slice(0,-1).join('/'):f.path, size: Math.round((f.size||0)/1024*10)/10 }));
+  const rootDirs = {};
+  for (const f of files) { const p = f.path.split('/'); if (p.length>1) rootDirs[p[0]]=(rootDirs[p[0]]||0)+1; }
+  const topDirs    = Object.entries(rootDirs).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  const bigFiles   = files.filter(f=>(f.size||0)>100000);
+  const rootFiles  = files.filter(f=>!f.path.includes('/')).length;
+  const maxDepth   = Math.max(...files.map(f=>f.path.split('/').length-1),0);
+  const nameCount  = {};
+  for (const f of files) { const n=f.path.split('/').pop().toLowerCase(); if(CODE_EXT.has(n.split('.').pop()||'')) nameCount[n]=(nameCount[n]||0)+1; }
+  const dupCandidates = Object.values(nameCount).filter(c=>c>2).length;
+  const totalSize  = Math.round(files.reduce((a,f)=>a+(f.size||0),0)/1024);
+
+  let score = 50;
+  if (hasTests)    score += 12;  if (hasReadme)  score += 8;  if (hasCI)      score += 8;
+  if (hasConfig)   score += 5;   if (hasDocFolder) score += 5; if (hasLicense) score += 4;
+  if (hasDocker)   score += 3;   if (rootFiles > 20) score -= 10;
+  if (bigFiles.length > 5) score -= 8;  if (!hasTests) score -= 10;
+  if (!hasReadme)  score -= 8;   if (!hasCI) score -= 5;
+  if (testRatio < 10 && codeFiles.length > 20) score -= 8;
+  if (dupCandidates > 5) score -= 6;   if (maxDepth > 8) score -= 4;
+  if (debtFiles.length > 0) score -= 5;
+  score = Math.max(10, Math.min(95, score));
+
+  const debtItems = [];
+  if (!hasTests||testRatio<10) debtItems.push({level:'high',text:`Cobertura de tests insuficiente — ${testRatio}% de archivos de código tienen tests.`});
+  if (!hasReadme) debtItems.push({level:'high',text:'Sin README. Ningún developer nuevo puede entender qué hace el sistema ni cómo instalarlo.'});
+  if (bigFiles.length>0) debtItems.push({level:'high',text:`${bigFiles.length} archivos superan 100KB: ${bigFiles.slice(0,3).map(f=>f.path.split('/').pop()).join(', ')}.`});
+  if (!hasCI) debtItems.push({level:'med',text:'Sin pipeline CI/CD. Los cambios no se validan automáticamente antes de fusionarse.'});
+  if (rootFiles>15) debtItems.push({level:'med',text:`${rootFiles} archivos sueltos en el directorio raíz. Falta estructura arquitectural.`});
+  if (dupCandidates>3) debtItems.push({level:'med',text:`${dupCandidates} nombres de archivo repetidos. Posible duplicación de lógica.`});
+  if (!hasDocFolder&&files.length>100) debtItems.push({level:'med',text:'Sin directorio de documentación técnica para un proyecto de este tamaño.'});
+  if (maxDepth>8) debtItems.push({level:'low',text:`Profundidad máxima de ${maxDepth} niveles. Jerarquía muy profunda.`});
+  if (!hasLicense) debtItems.push({level:'low',text:'Sin archivo de licencia. Ambigüedad legal sobre el uso del código.'});
+  if (debtFiles.length>0) debtItems.push({level:'low',text:`Archivos con nombres que sugieren deuda explícita: ${debtFiles.slice(0,3).map(f=>f.path.split('/').pop()).join(', ')}.`});
+  if (debtItems.length===0) debtItems.push({level:'low',text:'No se detectó deuda técnica crítica. El proyecto muestra buenas prácticas.'});
+
+  const recs = [];
+  if (!hasTests||testRatio<20) recs.push('Implementar suite de tests automatizados. Objetivo mínimo: 40% de cobertura.');
+  if (!hasCI) recs.push('Configurar pipeline CI/CD con GitHub Actions para validar cambios automáticamente.');
+  if (!hasReadme) recs.push('Crear un README completo con descripción, instalación, ejemplos y guía de contribución.');
+  if (bigFiles.length>0) recs.push('Mover assets pesados a un CDN externo. Ningún archivo de código debería superar 400 líneas.');
+  if (rootFiles>15) recs.push('Reorganizar el directorio raíz agrupando archivos en carpetas semánticas.');
+  if (!hasDocFolder) recs.push('Crear directorio /docs con documentación de arquitectura y decisiones de diseño.');
+  if (recs.length===0) recs.push('Mantener las prácticas actuales. Considerar documentación de arquitectura para decisiones futuras.');
+
+  return {
+    totalFiles: files.length, codeFiles: codeFiles.length, directories: dirs.length,
+    languagesCount: Object.keys(languages).length, languages, topFiles, topDirs,
+    hasTests, hasReadme, hasCI, hasConfig, hasDocFolder, hasDocker, hasLicense,
+    rootFiles, bigFiles: bigFiles.length, testRatio, maxDepth, dupCandidates,
+    score, debtItems, recs, tipo: detectType(paths, languages, hasConfig),
+    meta, testFiles: testFiles.length, totalSize,
+  };
+}
+
+function detectType(paths, langs, hasConfig) {
+  const p = paths.join(' '), l = Object.keys(langs);
+  if (p.includes('manage.py')||p.includes('wsgi.py')) return 'Aplicación web Django (Python)';
+  if (p.includes('app.py')||p.includes('flask'))       return 'Aplicación web Flask (Python)';
+  if (p.includes('angular.json'))                       return 'Aplicación Angular (TypeScript)';
+  if (p.includes('next.config')||p.includes('pages/')) return 'Aplicación Next.js (React)';
+  if (p.includes('nuxt.config'))                        return 'Aplicación Nuxt.js (Vue)';
+  if (p.includes('package.json')&&l.includes('JavaScript')) return 'Aplicación Node.js / JavaScript';
+  if (p.includes('main.go')||l.includes('Go'))          return 'Servicio backend en Go';
+  if (p.includes('cargo.toml')||l.includes('Rust'))     return 'Proyecto en Rust';
+  if (p.includes('pom.xml')||p.includes('build.gradle')) return 'Aplicación Java (Maven/Gradle)';
+  if (p.includes('gemfile')||l.includes('Ruby'))        return 'Aplicación Ruby / Rails';
+  if (l.includes('Python'))     return 'Proyecto Python';
+  if (l.includes('TypeScript')) return 'Proyecto TypeScript';
+  if (l.includes('JavaScript')) return 'Proyecto JavaScript';
+  if (l.includes('COBOL'))      return 'Sistema legacy COBOL';
+  if (l.includes('PHP'))        return 'Aplicación PHP';
+  if (l.includes('Swift'))      return 'Aplicación iOS/macOS (Swift)';
+  if (l.includes('Kotlin'))     return 'Aplicación Android/JVM (Kotlin)';
+  return 'Proyecto de software mixto';
+}
+
+// ══════════════════════════════════════════
+// APRENDIZAJE ACTIVO
+// ══════════════════════════════════════════
+function getActiveLearningInsights(data, repoName) {
+  const mem = loadMemory().filter(m => m.repoName !== repoName);
+  const insights = [];
+
+  if (mem.length === 0) {
+    insights.push('Este es el <b>primer repositorio analizado</b>. Titania está construyendo su base de conocimiento.');
+    return insights;
+  }
+
+  const avgScore = Math.round(mem.map(m => m.score).reduce((a,b) => a+b, 0) / mem.length);
+  const diff = data.score - avgScore;
+  if (diff > 10) insights.push(`Este repositorio tiene un score de <b>${data.score}</b>, <b style="color:var(--grn)">${diff} puntos por encima</b> del promedio de tu historial (${avgScore}).`);
+  else if (diff < -10) insights.push(`Este repositorio tiene un score de <b>${data.score}</b>, <b style="color:var(--red)">${Math.abs(diff)} puntos por debajo</b> del promedio de tu historial (${avgScore}).`);
+  else insights.push(`El score de este repositorio (<b>${data.score}</b>) es <b style="color:var(--amb)">similar al promedio</b> de tu historial (${avgScore}).`);
+
+  const noTests = mem.filter(m => !m.hasTests).length;
+  if (!data.hasTests && noTests > 0) insights.push(`<b style="color:var(--red)">${noTests + 1} de ${mem.length + 1}</b> repositorios en tu historial carecen de tests — patrón recurrente detectado.`);
+  else if (data.hasTests && noTests > mem.length / 2) insights.push(`Este repositorio <b style="color:var(--grn)">sí tiene tests</b>, a diferencia de la mayoría en tu historial.`);
+
+  const topLangs = Object.keys(data.languages);
+  const similar  = mem.filter(m => Object.keys(m.languages||{}).some(l => topLangs.includes(l)));
+  if (similar.length > 0) insights.push(`Titania encontró <b>${similar.length}</b> repositorios similares en tu historial que comparten lenguajes (${topLangs.slice(0,2).join(', ')}).`);
+
+  const prevAnalysis = mem.find(m => m.repoName === repoName);
+  if (prevAnalysis) {
+    const scoreDiff = data.score - prevAnalysis.score;
+    insights.push(`Análisis previo de este repo: score <b>${prevAnalysis.score}</b> → ahora <b>${data.score}</b> (${scoreDiff >= 0 ? '+' : ''}${scoreDiff}).`);
+  }
+
+  return insights.slice(0, 4);
+}
+
+// ══════════════════════════════════════════
+// COMPARISON WITH MEMORY
+// ══════════════════════════════════════════
+function compareWithMemory(data, repoName) {
+  const mem = loadMemory().filter(m => m.repoName !== repoName);
+  if (mem.length < 1) return null;
+  const avgScore = Math.round(mem.map(m => m.score).reduce((a,b)=>a+b,0)/mem.length);
+  const avgTests = Math.round(mem.map(m => m.testRatio||0).reduce((a,b)=>a+b,0)/mem.length);
+  const avgFiles = Math.round(mem.map(m => m.totalFiles||0).reduce((a,b)=>a+b,0)/mem.length);
+  const similar  = mem.filter(m => Object.keys(m.languages||{}).some(l => Object.keys(data.languages).includes(l)));
+  return { avgScore, avgTests, avgFiles, totalCompared: mem.length, similar: similar.length };
+}
+
+// ══════════════════════════════════════════
+// SCORE HELPERS
+// ══════════════════════════════════════════
+function scoreClass(n){ return n>=65?'g':n>=45?'w':'r'; }
+function scoreLabel(n){ return n>=80?'Excelente':n>=65?'Bueno':n>=45?'Moderado':n>=30?'Deficiente':'Crítico'; }
+function barColor(n)  { return n>=65?'var(--grn)':n>=45?'var(--amb)':'var(--red)'; }
+function posColor(n)  { return n>=65?'var(--grn)':n>=45?'var(--amb)':'var(--red)'; }
+
+// ══════════════════════════════════════════
+// RENDER SINGLE RESULT
+// ══════════════════════════════════════════
+function renderResults(s, repoName, fromMemory) {
+  const cmp  = compareWithMemory(s, repoName);
+  const bc   = barColor(s.score);
+  const meta = s.meta || {};
+  const alInsights = getActiveLearningInsights(s, repoName);
+
+  const langs = Object.entries(s.languages).map(([l,p]) => `
+    <div class="li"><div class="lr"><span class="ln">${l}</span><span class="lp">${p}%</span></div>
+    <div class="lbg"><div class="lbf" style="width:${p}%"></div></div></div>`).join('') || '<div style="font-size:11px;color:var(--txd)">Sin archivos de código.</div>';
+
+  const checks = [
+    [s.hasTests,'Tests automatizados'],[s.hasReadme,'Documentación README'],
+    [s.hasCI,'Pipeline CI/CD'],[s.hasConfig,'Gestión de dependencias'],
+    [s.hasDocFolder,'Directorio de documentación'],[s.hasDocker,'Containerización (Docker)'],
+    [s.hasLicense,'Licencia de uso'],
+  ].map(([ok,lbl]) => `<div class="ck"><span>${lbl}</span><span class="${ok?'ckok':'ckno'}">${ok?'✓ SÍ':'✗ NO'}</span></div>`).join('');
+
+  const summary = [
+    ['Tipo', s.tipo],
+    ['Tests', s.hasTests ? `Sí — ${s.testFiles} archivos (${s.testRatio}% del código)` : 'No detectados'],
+    ['CI/CD', s.hasCI ? 'Pipeline configurado' : 'Sin integración continua'],
+    ['Docs', s.hasReadme ? (s.hasDocFolder ? 'README + /docs' : 'Solo README') : 'Sin documentación'],
+    ['Profundidad', `${s.maxDepth} niveles máximo`],
+  ].map(([k,v]) => `<div class="sr"><span class="sk">${k}</span><span class="sv">${v}</span></div>`).join('');
+
+  const flist  = s.topFiles.map(f => `<div class="fi"><span class="fn">${f.name}</span><span class="fs">${f.size} KB</span></div>`).join('') || '<div style="font-size:11px;color:var(--txd)">Sin datos.</div>';
+  const dlist  = s.topDirs.map(([d,c]) => `<div class="di"><span class="diic">▸</span><span class="din">/${d}</span><span class="dic">${c} archivos</span></div>`).join('') || '<div style="font-size:11px;color:var(--txd)">Estructura plana.</div>';
+  const debt   = s.debtItems.map(d => `<div class="db ${d.level}"><span class="ds">${d.level==='high'?'⬥ Alta prioridad':d.level==='med'?'⬥ Media prioridad':'⬥ Baja prioridad'}</span><div class="dt">${d.text}</div></div>`).join('');
+  const recs   = s.recs.map((r,i) => `<div class="ri"><div class="rn">${String(i+1).padStart(2,'0')}</div><div class="rt">${r}</div></div>`).join('');
+
+  let cmpHTML = '';
+  if (cmp && cmp.totalCompared >= 1) {
+    const scoreDiff = s.score - cmp.avgScore, testDiff = s.testRatio - cmp.avgTests;
+    cmpHTML = `<div class="cmp-card fu">
+      <div class="cmp-ch"><span class="cmp-lbl">Comparación con tu historial · ${cmp.totalCompared} proyectos</span></div>
+      <div class="cmp-row"><span class="cmp-key">Score vs promedio</span><span class="cmp-val ${scoreDiff>0?'better':scoreDiff<0?'worse':'same'}">${s.score} vs ${cmp.avgScore} (${scoreDiff>0?'+':''}${scoreDiff})</span></div>
+      <div class="cmp-row"><span class="cmp-key">Tests vs promedio</span><span class="cmp-val ${testDiff>0?'better':testDiff<0?'worse':'same'}">${s.testRatio}% vs ${cmp.avgTests}% (${testDiff>0?'+':''}${testDiff}%)</span></div>
+      <div class="cmp-row"><span class="cmp-key">Archivos vs promedio</span><span class="cmp-val">${s.totalFiles} vs ${cmp.avgFiles} archivos</span></div>
+      ${cmp.similar>0?`<div class="cmp-row"><span class="cmp-key">Proyectos similares</span><span class="cmp-val">${cmp.similar} en historial comparten lenguajes</span></div>`:''}
+    </div>`;
+  }
+
+  const alHTML = alInsights.length > 0 ? `
+    <div class="active-learn fu">
+      <div class="al-head"><span class="al-lbl">Aprendizaje Activo de Titania</span><span class="al-icon">◈</span></div>
+      <div class="al-body">${alInsights.map(t => `<div class="al-insight"><span class="al-bullet">◆</span><span class="al-text">${t}</span></div>`).join('')}</div>
+    </div>` : '';
+
+  let metaExtras = '';
+  if (meta.stars) metaExtras += `<span><div class="md"></div>★ ${meta.stars.toLocaleString()}</span>`;
+  if (meta.created) metaExtras += `<span><div class="md"></div>Creado ${meta.created}</span>`;
+
+  const learningBanner = !fromMemory
+    ? `<div class="learn-banner fu"><div class="learn-dot"></div><div class="learn-banner-txt">Titania ha guardado este análisis en memoria. Con el tiempo aprenderá patrones y podrá comparar proyectos automáticamente.</div></div>`
+    : `<div class="learn-banner fu" style="border-color:rgba(74,158,224,.2);background:rgba(74,158,224,.05)"><div class="learn-dot" style="background:var(--blue)"></div><div class="learn-banner-txt" style="color:var(--blue)">Viendo análisis guardado en memoria.</div></div>`;
+
+  document.getElementById('res').innerHTML = `
+    <div class="rh fu">
+      <div class="rname">${repoName}</div>
+      <div class="rmeta"><span><div class="md"></div>${s.totalFiles} archivos</span><span><div class="md"></div>${s.totalSize} KB</span><span><div class="md"></div>${s.languagesCount} lenguajes</span>${metaExtras}</div>
+    </div>
+    ${learningBanner}
+    <div class="sg fu">
+      <div class="si">
+        <span class="sn ${scoreClass(s.score)}">${s.score}</span>
+        <span class="sl">Salud del Sistema</span>
+        <div class="hbw"><div class="hbb"><div class="hbf" style="width:${s.score}%;background:${bc}"></div></div>
+        <div class="hlb"><span>Crítico</span><span>${scoreLabel(s.score)}</span><span>Óptimo</span></div></div>
+      </div>
+      <div class="si"><span class="sn ${s.testRatio>=30?'g':s.testRatio>=10?'w':'r'}">${s.testRatio}%</span><span class="sl">Cobertura Tests</span></div>
+      <div class="si"><span class="sn ${s.bigFiles===0?'g':s.bigFiles<=3?'w':'r'}">${s.bigFiles}</span><span class="sl">Archivos Críticos</span></div>
+      <div class="si"><span class="sn">${s.maxDepth}</span><span class="sl">Profundidad Máx.</span></div>
+    </div>
+    ${alHTML}
+    ${cmpHTML}
+    <div class="card fu"><div class="ch"><span class="chlbl">Verificaciones de Salud</span></div><div class="cb">${checks}</div></div>
+    <div class="card fu"><div class="ch"><span class="chlbl">Resumen del Sistema</span></div><div class="cb">${summary}</div></div>
+    <div class="card fu"><div class="ch"><span class="chlbl">Distribución de Lenguajes</span></div><div class="cb">${langs}</div></div>
+    <div class="card fu"><div class="ch"><span class="chlbl">Directorios Principales</span></div><div class="cb">${dlist}</div></div>
+    <div class="card fu"><div class="ch"><span class="chlbl">Archivos más Pesados</span></div><div class="cb">${flist}</div></div>
+    <div class="card fu"><div class="ch"><span class="chlbl">Deuda Técnica Detectada</span><span class="chnum">${s.debtItems.length}</span></div><div class="cb">${debt}</div></div>
+    <div class="card fu"><div class="ch"><span class="chlbl">Recomendaciones Prioritarias</span></div><div class="cb">${recs}</div></div>
+    <div class="dl-row">
+      <button class="dbtn" onclick="downloadPDF()">↓ PDF / Imprimir</button>
+      <button class="dbtn" onclick="downloadTXT()">↓ Exportar Texto</button>
+    </div>
+    <button class="btn-new" onclick="newAnalysis()">← Nuevo Análisis</button>`;
+
+  show('res');
+}
+
+// ══════════════════════════════════════════
+// RENDER MULTI RESULTS
+// ══════════════════════════════════════════
+function renderMultiResults(results) {
+  _multiResults = results;
+  const successes = results.filter(r => r.status === 'ok');
+  const errors    = results.filter(r => r.status === 'error');
+  const sorted    = [...successes].sort((a,b) => b.data.score - a.data.score);
+
+  document.getElementById('multi-rname').textContent =
+    `${results.length} Repositorios Analizados`;
+  document.getElementById('multi-rmeta').textContent =
+    `${successes.length} exitosos · ${errors.length} errores · Análisis simultáneo completado`;
+
+  const posClass = i => i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+
+  const rankGrid = document.getElementById('rank-grid');
+  rankGrid.innerHTML = '';
+
+  // Add successful results
+  sorted.forEach((r, i) => {
+    const col = posColor(r.data.score);
+    const item = document.createElement('div');
+    item.style.marginBottom = '2px';
+    item.innerHTML = `
+      <div class="rank-item" onclick="toggleDetail(${i})">
+        <div class="rank-pos ${posClass(i)}">${i+1}</div>
+        <div class="rank-info">
+          <div class="rank-repo">${r.repoName}</div>
+          <div class="rank-detail">${r.data.totalFiles} archivos · ${Object.keys(r.data.languages)[0]||'—'} · ${r.data.hasTests?'✓ Tests':'✗ Sin tests'} · ${r.data.hasCI?'✓ CI/CD':'✗ Sin CI'}</div>
+        </div>
+        <div class="rank-score" style="color:${col}">${r.data.score}</div>
+        <div class="rank-arrow">›</div>
+      </div>
+      <div class="detail-panel" id="detail-${i}">
+        <div class="detail-inner" id="detail-inner-${i}"></div>
+      </div>`;
+    rankGrid.appendChild(item);
+  });
+
+  // Add errors
+  errors.forEach(r => {
+    const item = document.createElement('div');
+    item.style.marginBottom = '2px';
+    item.innerHTML = `
+      <div class="rank-item error">
+        <div class="rank-pos">✗</div>
+        <div class="rank-info">
+          <div class="rank-repo">${r.repoName}</div>
+          <div class="rank-detail" style="color:var(--red)">${r.error}</div>
+        </div>
+      </div>`;
+    rankGrid.appendChild(item);
+  });
+
+  show('multi-res');
+}
+
+function toggleDetail(idx) {
+  const panel = document.getElementById(`detail-${idx}`);
+  const inner = document.getElementById(`detail-inner-${idx}`);
+  const isOpen = panel.classList.contains('open');
+
+  // Close all others
+  document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+
+  if (!isOpen) {
+    panel.classList.add('open');
+    if (inner.innerHTML === '') {
+      // Render mini result inside
+      const r = _multiResults.filter(r => r.status === 'ok').sort((a,b) => b.data.score - a.data.score)[idx];
+      if (r) inner.innerHTML = buildMiniResult(r.data, r.repoName);
+    }
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function buildMiniResult(s, repoName) {
+  const bc = barColor(s.score);
+  const langs = Object.entries(s.languages).slice(0,5).map(([l,p]) => `
+    <div class="li" style="margin-bottom:8px"><div class="lr"><span class="ln">${l}</span><span class="lp">${p}%</span></div>
+    <div class="lbg"><div class="lbf" style="width:${p}%"></div></div></div>`).join('');
+  const checks = [
+    [s.hasTests,'Tests'],[s.hasReadme,'README'],
+    [s.hasCI,'CI/CD'],[s.hasLicense,'Licencia'],
+  ].map(([ok,lbl]) => `<div class="ck"><span>${lbl}</span><span class="${ok?'ckok':'ckno'}">${ok?'✓':'✗'}</span></div>`).join('');
+  const debt = s.debtItems.filter(d=>d.level==='high').map(d => `
+    <div class="db high" style="margin-bottom:6px"><span class="ds">⬥ Alta prioridad</span><div class="dt">${d.text}</div></div>`).join('');
+
+  return `
+    <div class="sg" style="margin-bottom:10px">
+      <div class="si"><span class="sn ${scoreClass(s.score)}">${s.score}</span><span class="sl">Score</span>
+        <div class="hbw"><div class="hbb"><div class="hbf" style="width:${s.score}%;background:${bc}"></div></div></div>
+      </div>
+      <div class="si"><span class="sn ${s.testRatio>=30?'g':s.testRatio>=10?'w':'r'}">${s.testRatio}%</span><span class="sl">Tests</span></div>
+    </div>
+    <div style="margin-bottom:10px"><div style="font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--txd);margin-bottom:8px">Lenguajes</div>${langs}</div>
+    <div style="margin-bottom:10px">${checks}</div>
+    ${debt ? `<div style="font-size:8px;letter-spacing:.4em;text-transform:uppercase;color:var(--red);margin-bottom:8px">Deuda Alta</div>${debt}` : ''}
+    <button class="dbtn" style="width:100%;margin-top:8px" onclick="event.stopPropagation();viewFullResult('${repoName}')">Ver análisis completo →</button>`;
+}
+
+function viewFullResult(repoName) {
+  const mem = loadMemory();
+  const entry = mem.find(m => m.repoName === repoName);
+  if (entry) { renderResults(entry, repoName, true); }
+}
+
+// ══════════════════════════════════════════
+// MULTI-REPO STATUS GRID
+// ══════════════════════════════════════════
+function initMultiLoadUI(repos) {
+  document.getElementById('multi-load-area').style.display = 'block';
+  document.getElementById('multi-prog-fill').style.width = '0%';
+  document.getElementById('lstep').textContent = `Analizando ${repos.length} repositorios en paralelo...`;
+  document.getElementById('live-learn').style.display = 'none';
+
+  const grid = document.getElementById('msr-grid');
+  grid.innerHTML = repos.map((name, i) => `
+    <div class="msr-card" id="msr-${i}">
+      <div class="msr-idx">${i+1}</div>
+      <div class="msr-info">
+        <div class="msr-name">${name}</div>
+        <div class="msr-status analyzing" id="msr-status-${i}">Analizando...</div>
+      </div>
+      <div class="msr-score" id="msr-score-${i}" style="color:var(--txd)">—</div>
+    </div>`).join('');
+}
+
+function updateRepoStatus(idx, status, score, error) {
+  const card   = document.getElementById(`msr-${idx}`);
+  const st     = document.getElementById(`msr-status-${idx}`);
+  const sc     = document.getElementById(`msr-score-${idx}`);
+  if (!card) return;
+  card.className = `msr-card ${status}`;
+  if (status === 'done') {
+    st.className = 'msr-status done'; st.textContent = 'Completado';
+    sc.textContent = score; sc.style.color = posColor(score);
+  } else if (status === 'error') {
+    st.className = 'msr-status error'; st.textContent = error || 'Error';
+    sc.textContent = '✗'; sc.style.color = 'var(--red)';
+  }
+}
+
+function updateMultiProgress(done, total) {
+  document.getElementById('multi-prog-fill').style.width = `${Math.round(done/total*100)}%`;
+}
+
+// ══════════════════════════════════════════
+// MAIN FLOW
+// ══════════════════════════════════════════
+async function start() {
+  const errEl = document.getElementById('ferr');
+  errEl.style.display = 'none';
+
+  // Collect URLs
+  const urls = [];
+  for (let i = 0; i < repoCount; i++) {
+    const inp = document.getElementById(`repo-url-${i}`);
+    const url = (inp?.value || '').trim();
+    if (url) urls.push(url);
+  }
+
+  if (urls.length === 0) { showErr('Introduce al menos una URL de repositorio.'); return; }
+
+  // Validate & deduplicate
+  const parsed = [];
+  const seen   = new Set();
+  for (const url of urls) {
+    const gh = parseGH(url);
+    if (!gh) { showErr(`URL inválida: ${url}`); return; }
+    const key = `${gh.owner}/${gh.repo}`;
+    if (!seen.has(key)) { seen.add(key); parsed.push({ ...gh, repoName: key }); }
+  }
+
+  document.getElementById('gbtn').disabled = true;
+
+  if (parsed.length === 1) {
+    await startSingle(parsed[0]);
+  } else {
+    await startMulti(parsed);
+  }
+}
+
+async function startSingle({ owner, repo, repoName }) {
+  show('load');
+  document.getElementById('multi-load-area').style.display = 'none';
+  startSteps();
+  showLiveLearning(repoName);
+
+  try {
+    const [items, meta] = await Promise.all([getTree(owner, repo), getRepoMeta(owner, repo)]);
+    if (!items.length) throw new Error('Repositorio vacío o no accesible.');
+
+    updateLiveLearning('Archivos', items.filter(i => i.type==='blob').length + ' encontrados');
+    updateLiveLearning('Estado', 'Analizando estructura...');
+
+    const data     = analyzeTree(items, meta);
+    data.repoName  = repoName;
+
+    updateLiveLearning('Lenguajes', Object.keys(data.languages).slice(0,3).join(', '));
+    updateLiveLearning('Score', data.score + '/100 — ' + scoreLabel(data.score));
+    updateLiveLearning('Deuda', data.debtItems.length + ' items detectados');
+
+    await new Promise(r => setTimeout(r, 800)); // let user see the learning panel
+    saveToMemory(data);
+    stopSteps();
+    hideLiveLearning();
+    renderResults(data, repoName, false);
+  } catch(e) {
+    stopSteps();
+    hideLiveLearning();
+    show('home');
+    showErr(e.message || 'Error inesperado. Intenta de nuevo.');
+    document.getElementById('gbtn').disabled = false;
+  }
+}
+
+async function startMulti(repos) {
+  show('load');
+  document.getElementById('load-title').textContent = 'Análisis Simultáneo';
+  initMultiLoadUI(repos.map(r => r.repoName));
+
+  // Show live learning for multi
+  const llEl = document.getElementById('live-learn');
+  llEl.style.display = 'block';
+  addLLItem('Modo', 'Análisis paralelo activo');
+  addLLItem('Repos', `${repos.length} repositorios en cola`);
+
+  let done = 0;
+  const results = [];
+
+  const tasks = repos.map((r, idx) =>
+    Promise.allSettled([getTree(r.owner, r.repo), getRepoMeta(r.owner, r.repo)])
+      .then(([treeRes, metaRes]) => {
+        if (treeRes.status === 'rejected') throw new Error(treeRes.reason?.message || 'Error al obtener árbol');
+        const items = treeRes.value;
+        const meta  = metaRes.status === 'fulfilled' ? metaRes.value : {};
+        if (!items.length) throw new Error('Repositorio vacío');
+        const data = analyzeTree(items, meta);
+        data.repoName = r.repoName;
+        saveToMemory(data);
+        done++;
+        updateRepoStatus(idx, 'done', data.score);
+        updateMultiProgress(done, repos.length);
+        updateLiveLearning(`Repo ${idx+1}`, `${r.repoName} — Score: ${data.score}`);
+        results.push({ status: 'ok', repoName: r.repoName, data });
+      })
+      .catch(e => {
+        done++;
+        updateRepoStatus(idx, 'error', null, e.message);
+        updateMultiProgress(done, repos.length);
+        results.push({ status: 'error', repoName: r.repoName, error: e.message });
+      })
+  );
+
+  await Promise.all(tasks);
+
+  updateLiveLearning('Estado', 'Todos los análisis completados');
+  await new Promise(r => setTimeout(r, 600));
+
+  stopSteps();
+  hideLiveLearning();
+  document.getElementById('load-title').textContent = 'Analizando';
+  document.getElementById('gbtn').disabled = false;
+
+  if (results.filter(r => r.status === 'ok').length === 1) {
+    // Only one success, show single result view
+    const r = results.find(r => r.status === 'ok');
+    renderResults(r.data, r.repoName, false);
+  } else {
+    renderMultiResults(results);
+  }
+}
+
+// ══════════════════════════════════════════
+// ERROR / NAV
+// ══════════════════════════════════════════
+function showErr(msg) {
+  const e = document.getElementById('ferr');
+  e.textContent = '⚠ ' + msg;
+  e.style.display = 'block';
+}
+function newAnalysis() { goHome(); }
+
+// ══════════════════════════════════════════
+// DOWNLOAD
+// ══════════════════════════════════════════
+function downloadPDF() {
+  const repoName = document.querySelector('.rname')?.textContent || 'repositorio';
+  const w = window.open('', '_blank');
+  if (!w) { alert('Permite ventanas emergentes para descargar'); return; }
+  const now = new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'});
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Titania — ${repoName}</title>
+    <style>body{font-family:'Courier New',monospace;max-width:800px;margin:0 auto;padding:32px;font-size:12px;color:#111;line-height:1.6}h1{font-size:32px;font-weight:900}hr{border:none;border-top:2px solid #111;margin:20px 0}@media print{body{padding:16px}}</style>
+  </head><body><h1>TITANIA</h1><p style="font-size:10px;color:#666;letter-spacing:.3em;text-transform:uppercase">Reporte de Análisis · ${repoName} · ${now}</p><hr>
+    ${document.getElementById('res').innerText.replace(/←.*$/,'').trim().replace(/\n/g,'<br>')}
+    <hr><p style="font-size:10px;color:#999">Generado por TITANIA v0.3 · ${now}</p>
+  </body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 800);
+}
+function downloadTXT() {
+  const repoName = document.querySelector('.rname')?.textContent || 'repositorio';
+  const content  = document.getElementById('res')?.innerText || '';
+  const now = new Date().toLocaleString('es-MX');
+  const txt = `TITANIA — Reporte de Análisis\n${'='.repeat(50)}\nRepositorio: ${repoName}\nFecha: ${now}\n${'='.repeat(50)}\n\n${content}\n\n${'='.repeat(50)}\nGenerado por TITANIA v0.3`;
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'titania-' + repoName.replace('/','_') + '.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function downloadMultiTXT() {
+  const successes = _multiResults.filter(r => r.status === 'ok').sort((a,b) => b.data.score - a.data.score);
+  const now = new Date().toLocaleString('es-MX');
+  let txt = `TITANIA — Análisis Comparativo Simultáneo\n${'='.repeat(50)}\nFecha: ${now}\nTotal analizados: ${_multiResults.length}\n${'='.repeat(50)}\n\n`;
+  txt += `RANKING POR SALUD DEL SISTEMA\n${'-'.repeat(40)}\n`;
+  successes.forEach((r, i) => {
+    txt += `\n${i+1}. ${r.repoName}\n   Score: ${r.data.score}/100 — ${scoreLabel(r.data.score)}\n   Tests: ${r.data.testRatio}% · CI/CD: ${r.data.hasCI?'Sí':'No'} · Archivos: ${r.data.totalFiles}\n   Lenguajes: ${Object.keys(r.data.languages).slice(0,3).join(', ')}\n   Deuda: ${r.data.debtItems.filter(d=>d.level==='high').length} alta, ${r.data.debtItems.filter(d=>d.level==='med').length} media\n`;
+  });
+  if (_multiResults.filter(r => r.status === 'error').length > 0) {
+    txt += `\nERRORES\n${'-'.repeat(40)}\n`;
+    _multiResults.filter(r => r.status === 'error').forEach(r => {
+      txt += `✗ ${r.repoName}: ${r.error}\n`;
+    });
+  }
+  txt += `\n${'='.repeat(50)}\nGenerado por TITANIA v0.3`;
+  const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'titania-comparativa.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  updateMemBadge();
+  renderRepoInputs();
+  const backBtn = document.getElementById('back-btn');
+  if (backBtn) backBtn.style.display = 'none';
+});
+</script>
+</body>
+</html>
